@@ -5,6 +5,9 @@
 # Harmless, but they add clutter to the repo
 *~
 
+# jupyter checkpoints
+**/.ipynb_checkpoints
+
 # don't track the data directory
 # data.txt was already tracked with a note on where to find data
 data/
