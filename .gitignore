@@ -13,3 +13,10 @@
 data/
 
 staged/
+
+notebooks/1.0_Histogram_Representation-solved.ipynb
+
+# pycharm project configs
+.idea/
+
+*.pyc
