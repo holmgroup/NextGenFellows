@@ -2,18 +2,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 import skimage.io
 
-from . import classification_tools as ct
 
-
-def pano_image(x, y, paths, patch_size=(3, 3), ax0=None):
+def pano_plot(x, y, paths, patch_size=(3, 3), ax0=None):
     """
-    overlays images on t-sne plot
-    :param x: array of x coords
-    :param y: array y coords
-    :param paths: list of image paths
-    :param patch_size: image pach size
-    :param ax0: axis object
-    :return: axis object if one is passed to ax0
+    Graphs y vs x with images on plot instead of points.
+
+    Generates 'panoramic' image plots which are useful for visualizing how images 
+    separate in feature space for clustering and classification challenges.
+    
+    Parameters
+    ---------------
+    x, y: ndarray
+        n-element arrays of x and y coordinates for plot
+        
+    paths: list of strings or path objects
+        n-element list of paths to images to be displaied at each point
+        
+    patch_size: tuple(int, int)
+        size of the image patches displayed at each point
+        
+    ax0: None or matplotlib axis object
+        if None, a new figure and axis will be created and the visualization will be displayed.
+        if an axis is supplied, the panoramic visualization will be plotted on the axis in place.
+        
+    Returns
+    ----------
+    None
+    
     """
     if ax0 is None:
         fig, ax = plt.subplots(figsize=(7, 7), dpi=150)
@@ -27,18 +42,43 @@ def pano_image(x, y, paths, patch_size=(3, 3), ax0=None):
 
     if ax0 is None:
         plt.show()
-    else:
-        return ax
 
-def pretty_cm(cm=None, labelnames=ct.label_list, cscale=0.6, ax0=None, fs=12):
+
+def pretty_cm(cm, labelnames, cscale=0.6, ax0=None, fs=12, cmap='magma'):
     """
-    generates a pretty-formated confusion matrix
-    :param cm: confusion matrix, nxn numpy array
-    :param labelnames: list of labels corresponding to each row/column in cm, for labeling purposes
-    :param cscale : parameter adjusts the color intensity (useful for good models with few mistakes)
-    :param ax0: matplotlib axis object on which to compute confusion matrix. If none is provided, plot will be shown, but can not be manipulated further (ie is not returned)
-    :param fs: font size for axis labels and annotations on confusion matrix
+    Generates a pretty-formated confusion matrix for convenient visualization.
+    
+    The true labels are displayed on the rows, and the predicted labels are displayed on the columns.
+    
+    Parameters
+    ----------
+    cm: ndarray 
+        nxn array containing the data of the confusion matrix.
+    
+    labelnames: list(string)
+        list of class names in order on which they appear in the confusion matrix. For example, the first
+        element should contain the class corresponding to the first row and column of *cm*.
+
+    cscale: float
+        parameter that adjusts the color intensity. Allows color to be present for confusion matrices with few mistakes,
+        and controlling the intensity for ones with many misclassifications.
+    
+    ax0: None or matplotlib axis object
+        if None, a new figure and axis will be created and the visualization will be displayed.
+        if an axis is supplied, the confusion matrix will be plotted on the axis in place.
+
+    fs: int
+        font size for text on confusion matrix.
+        
+    cmap: str
+        matplotlib colormap to use
+    
+    Returns
+    ---------
+    None
+    
     """
+    
     acc = cm.trace() / cm.sum()
     if ax0 is None:
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7, 7), dpi=300)
@@ -47,7 +87,7 @@ def pretty_cm(cm=None, labelnames=ct.label_list, cscale=0.6, ax0=None, fs=12):
         ax = ax0
 
     n = len(labelnames)
-    ax.imshow(np.power(cm, cscale), cmap='magma', extent=(0, n, 0, n))
+    ax.imshow(np.power(cm, cscale), cmap=cmap, extent=(0, n, 0, n))
     labelticks = np.arange(n) + 0.5
     ax.set_xticks(labelticks, minor=True)
     ax.set_yticks(labelticks, minor=True)
@@ -70,3 +110,4 @@ def pretty_cm(cm=None, labelnames=ct.label_list, cscale=0.6, ax0=None, fs=12):
         return
     else:
         return ax
+
