@@ -16,7 +16,7 @@ Seminars for the first week are scheduled where we'll cover some basic concepts 
 |Friday, June 11, 2021 |Supervised machine learning with SVM |Class notes | Katelyn |
 
 
-We will also go over some tutorials to help you practice new skills. These are just a start; we're excited to see where you take your research project!
+We will also go over some hands-on tutorials to help you practice new skills. These are just a start; we're excited to see where you take your research project!
 
 |  Day |Topic   |Goals   |Instructor   |
 |---|---|---|---|
