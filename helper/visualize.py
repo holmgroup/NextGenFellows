@@ -1,9 +1,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 import skimage.io
+import skimage.color
+
+def pad_img(img, color, padwidth=5):
+    if len(img.shape) == 2:
+        img = skimage.color.gray2rgb(img)
+        
+    r,c = img.shape[:2]
+    #print(r,c, img.shape, color, img.dtype, np.array(color).dtype)
+    new_img = np.reshape(color, (1,1,3)) * np.ones((r+2*padwidth, c+2*padwidth, 3), img.dtype)
+    new_img[padwidth:-padwidth,padwidth:-padwidth,:] = img
+    return new_img
 
 
-def pano_plot(x, y, paths, patch_size=(3, 3), ax0=None):
+def pano_plot(x, y, paths, patch_size=(3, 3), ax0=None, labels=None):
     """
     Graphs y vs x with images on plot instead of points.
 
@@ -24,6 +36,9 @@ def pano_plot(x, y, paths, patch_size=(3, 3), ax0=None):
     ax0: None or matplotlib axis object
         if None, a new figure and axis will be created and the visualization will be displayed.
         if an axis is supplied, the panoramic visualization will be plotted on the axis in place.
+
+    labels: None or list-like
+        (optional) if not none, images will be padded in color corresponding to their labels
         
     Returns
     ----------
@@ -36,9 +51,20 @@ def pano_plot(x, y, paths, patch_size=(3, 3), ax0=None):
         ax = ax0
     px, py = patch_size
     ax.scatter(x, y, color=(0, 0, 0, 0))
-    for xi, yi, pi in zip(x, y, paths):
-        im = skimage.io.imread(pi)
-        ax.imshow(im, extent=(xi - px, xi + px, yi - py, yi + py), cmap='gray')
+    if labels is None:
+        for xi, yi, pi in zip(x, y, paths):
+            im = skimage.io.imread(pi)
+            ax.imshow(im, extent=(xi - px, xi + px, yi - py, yi + py), cmap='gray')
+    else:
+        unique = np.unique(labels)
+        colors = np.array(sns.color_palette('bright')[:len(unique)])
+        colors = skimage.exposure.rescale_intensity(colors, (0,1), (0,255)).astype(np.uint8)
+        mapper = {u:c for u, c in zip(unique, colors)}
+        
+        for xi, yi, pi, li  in zip(x, y, paths, labels):
+                im = skimage.io.imread(pi)
+                im = pad_img(im, mapper[li])
+                ax.imshow(im, extent=(xi - px, xi + px, yi - py, yi + py), cmap='gray')
 
     if ax0 is None:
         plt.show()

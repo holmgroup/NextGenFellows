@@ -20,3 +20,6 @@ notebooks/1.0_Histogram_Representation-solved.ipynb
 .idea/
 
 *.pyc
+
+# python environment
+env/
